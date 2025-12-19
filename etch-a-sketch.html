@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etch-a-sketch</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 100px;
+            margin-top: 40px;
+        }
+
+        .new {
+            padding: 5px 10px;
+            background-color: darkblue;
+            color: white;
+            border-radius: 5px;
+            width: fit-content;
+            height: auto;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 480px;
+            height: 480px;
+            border: 2px solid darkgreen;
+        }
+
+        .square {
+            height: 30px;
+            width: 30px;
+            border: 1px solid green;
+            box-sizing: border-box;
+            /* background-color: white; */
+            transition: background-color 0.005s ease-in;
+        }
+
+        /* .drawn {
+            background-color: lime;
+        } */
+    </style>
+</head>
+
+<body>
+    <button class="new">New Grid</button>
+    <div class="container"></div>
+    <script>
+        const container = document.querySelector(".container");
+        const newBtn = document.querySelector(".new");
+        const containerSize = 480;
+
+        function createGrid(size) {
+            container.innerHTML = "";
+
+            const squareSize = containerSize / size;
+
+            for (let i = 0; i < size * size; i++) {
+                const square = document.createElement("div");
+                square.classList.add("square");
+                square.style.width = `${squareSize}px`;
+                square.style.height = `${squareSize}px`;
+
+                // square.addEventListener("mouseenter", () => {
+                //     square.classList.add("drawn");
+                // });
+
+                square.dataset.darkness = 0;
+
+                square.addEventListener("mouseenter", () => {
+                    let darkness = Number(square.dataset.darkness);
+
+                    // First interaction → random color
+                    if (darkness === 0) {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+
+                        square.dataset.r = r;
+                        square.dataset.g = g;
+                        square.dataset.b = b;
+
+                        square.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+                    }
+
+                    // Darken by 10% per interaction
+                    if (darkness < 10) {
+                        darkness++;
+                        square.dataset.darkness = darkness;
+
+                        let r = square.dataset.r * 0.9;
+                        let g = square.dataset.g * 0.9;
+                        let b = square.dataset.b * 0.9;
+
+                        square.dataset.r = r;
+                        square.dataset.g = g;
+                        square.dataset.b = b;
+
+                        square.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+                    }
+                });
+
+                container.appendChild(square);
+            }
+        }
+
+        newBtn.addEventListener("click", () => {
+            let userSize = prompt("Enter a number for the size of the grid (for example entering 8 will produce a 8x8 grid)");
+            userSize = Number(userSize);
+
+            if (userSize < 1 || userSize > 100) {
+                alert("Enter a number between 1 and 100");
+                return;
+            }
+
+            createGrid(userSize);
+        });
+
+        createGrid(16);
+
+    </script>
+</body>
+
+</html>
